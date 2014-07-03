@@ -110,12 +110,16 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
             @Override
             public void onUserInfoFetched(GraphUser user) {
+            	Session session=Session.getActiveSession();
                 HelloFacebookSampleActivity.this.user = user;
-                //updateUI();
+                updateUI();
                 // It's possible that we were waiting for this.user to be populated in order to post a
                 // status update.
-                onClickPostPhoto();
-                handlePendingAction();
+                //onClickPostPhoto();
+                if(user==null && session.isOpened() )
+                {
+                	onClickPostPhoto();
+                }
                 
             }
         });
@@ -241,14 +245,23 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         boolean enableButtons = (session != null && session.isOpened());
 
         postStatusUpdateButton.setEnabled(enableButtons || canPresentShareDialog);
-        postPhotoButton.setEnabled(true);
+        ////////////////////////////////////////////
+        /*loginButton.setVisibility(View.GONE);
+        postPhotoButton.setVisibility(View.VISIBLE);*/
+        /////////////////////////////////////////////////////////////////
         //pickFriendsButton.setEnabled(enableButtons);
         //pickPlaceButton.setEnabled(enableButtons);
 
-        if (enableButtons && user != null) {
+        if (enableButtons && user!=null) {
             profilePictureView.setProfileId(user.getId());
             greeting.setText(getString(R.string.hello_user, user.getFirstName()));
+            ///////////////////////////////////////////////////////////
+            loginButton.setVisibility(View.GONE);
+            postPhotoButton.setVisibility(View.VISIBLE);
+            //////////////////////////////////////////////////
         } else {
+        	loginButton.setVisibility(View.VISIBLE);
+            postPhotoButton.setVisibility(View.GONE);
             profilePictureView.setProfileId(null);
             greeting.setText(null);
         }
